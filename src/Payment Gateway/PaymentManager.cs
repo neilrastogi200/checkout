@@ -30,9 +30,9 @@ namespace Payment_Gateway
         public async Task<ProcessPaymentTransactionResponse> HandlePayment(PaymentRequest paymentRequest)
         {
             //Check Validation of card details
-            //Mapping
-            var cardDetails = CardDetails(paymentRequest);
-            var isCardValid = _cardDetailsService.IsValid(cardDetails.CardExpiryMonth,cardDetails.CardExpiryYear);
+            //Mapping > changed mind probably no need now.
+            //var cardDetails = CardDetails(paymentRequest);
+            var isCardValid = _cardDetailsService.IsValid(paymentRequest.Card.CardExpiryMonth,paymentRequest.Card.CardExpiryYear);
 
             if (isCardValid)
             {
@@ -42,7 +42,7 @@ namespace Payment_Gateway
 
                if (currency != null && merchant != null)
                {
-                   var cardId = _cardDetailsService.AddCardDetails(cardDetails);
+                   var cardId = _cardDetailsService.AddCardDetails(paymentRequest.Card);
 
                    if (cardId > 0)
                    {
@@ -52,14 +52,7 @@ namespace Payment_Gateway
                            CurrencyId = currency.CurrencyId,
                            CardId = cardId,
                            MerchantId = paymentRequest.MerchantId,
-                           Card = new CardDetails()
-                           {
-                               CardExpiryMonth = paymentRequest.Card.CardExpiryMonth,
-                               Cvv = paymentRequest.Card.Cvv,
-                               CardHolderName = paymentRequest.Card.CardHolderName,
-                               CardNumber = paymentRequest.Card.CardNumber,
-                               CardExpiryYear = paymentRequest.Card.CardExpiryYear
-                           }
+                           Card = paymentRequest.Card
                        };
 
                      var paymentResult = await _transactionService.ProcessPaymentTransaction(processPayment);
