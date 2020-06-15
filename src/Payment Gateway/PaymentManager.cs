@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Repositories;
@@ -14,14 +15,16 @@ namespace Payment_Gateway
         private readonly ITransactionService _transactionService;
         private readonly ICurrencyRepository _currencyRepository;
         private readonly IMerchantRepository _merchantRepository;
+        private readonly ILogger<PaymentManager> _logger;
 
         public PaymentManager(ICardDetailsService cardDetailsService, ITransactionService transactionService,
-            ICurrencyRepository currencyRepository, IMerchantRepository merchantRepository)
+            ICurrencyRepository currencyRepository, IMerchantRepository merchantRepository, ILogger<PaymentManager> logger)
         {
             _cardDetailsService = cardDetailsService ?? throw new ArgumentNullException(nameof(cardDetailsService));
             _transactionService = transactionService ?? throw new ArgumentNullException(nameof(transactionService));
             _currencyRepository = currencyRepository ?? throw  new ArgumentNullException(nameof(currencyRepository));
             _merchantRepository = merchantRepository ?? throw new ArgumentNullException(nameof(merchantRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
         public async Task<ProcessPaymentTransactionResponse> HandlePayment(PaymentRequest paymentRequest)
@@ -33,6 +36,7 @@ namespace Payment_Gateway
 
             if (isCardValid)
             {
+                _logger.LogInformation("The card Details is valid");
                var currency = await _currencyRepository.GetCurrencyByName(paymentRequest.Currency);
                var merchant = await _merchantRepository.GetMerchantById(new Guid(paymentRequest.MerchantId));
 
