@@ -8,7 +8,7 @@ using Payment.Gateway.Data.Repositories;
 using Payment_Gateway;
 using Payment_Gateway.Models;
 using Xunit;
-using CardDetails = Payment_Gateway.Models.CardDetails;
+using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
 namespace Payment.Gateway.Tests
 {
@@ -37,51 +37,30 @@ namespace Payment.Gateway.Tests
         public void HandlePayment_When_PaymentRequest_Is_Valid_Returns_ProcessPaymentTransactionResponse_Successfully()
         {
             //Arrange
+
+            var cardData = new CardDetails()
+            {
+                CardExpiryYear = "2024",
+                CardExpiryMonth = "06",
+                CardHolderName = "Mr. Curtis",
+                Cvv = "100",
+                CardNumber = "4242424242424242"
+            };
+
             var input = new PaymentRequest()
             {
                 Amount = 300,
-                Card = new CardDetails()
-                {
-                    CardExpiryYear = "2024",
-                    CardExpiryMonth = "06",
-                    CardHolderName = "Mr. Curtis",
-                    Cvv = "100",
-                    CardNumber = "4242424242424242"
-                },
+                Card = cardData,
                 Currency = "GBP",
                 MerchantId = "6662E78B-40E3-48AC-BBB5-21B97078B97A"
             };
 
-            var cardData = new CardDetails()
-            {
-                CardExpiryYear = input.Card.CardExpiryYear,
-                CardExpiryMonth = input.Card.CardExpiryMonth,
-                Cvv = input.Card.Cvv,
-                CardHolderName = input.Card.CardHolderName,
-                CardNumber = input.Card.CardNumber
-            };
-
-            //var cardDataDTO = new Payment.Gateway.Data.Entities.CardDetails()
-            //{
-            //    CardExpiryYear = input.Card.CardExpiryYear,
-            //    CardExpiryMonth = input.Card.CardExpiryMonth,
-            //    Cvv = input.Card.Cvv,
-            //    CardHolderName = input.Card.CardHolderName,
-            //    CardNumber = input.Card.CardNumber
-            //};
-
+           
 
             var processPayment = new ProcessPayment()
             {
                 Amount = input.Amount,
-                Card = new CardDetails()
-                {
-                    CardExpiryYear = input.Card.CardExpiryYear,
-                    CardExpiryMonth = input.Card.CardExpiryMonth,
-                    Cvv = input.Card.Cvv,
-                    CardHolderName = input.Card.CardHolderName,
-                    CardNumber = input.Card.CardNumber
-                },
+                Card = cardData,
                 CardId = 1,
                 CurrencyId = 1,
                 MerchantId = input.MerchantId
@@ -95,16 +74,14 @@ namespace Payment.Gateway.Tests
             _mockCardDetailsService.Setup(x => x.IsValid(input.Card.CardExpiryMonth, input.Card.CardExpiryYear))
                 .Returns(true);
 
-            _mockCardDetailsService.Setup(x => x.AddCardDetails(cardData)).Returns(1);
+            _mockCardDetailsService.Setup(x => x.AddCardDetails(input.Card)).Returns(1);
 
             _mockCurrencyRepository.Setup(x => x.GetCurrencyByName(input.Currency)).ReturnsAsync(new Currency());
 
             _mockMerchantRepository.Setup(x => x.GetMerchantById(new Guid(input.MerchantId)))
                 .ReturnsAsync(new Merchant());
 
-            //_mockCardDetailsRepository.Setup(x => x.AddCardDetails(cardDataDTO)).Returns(1);
-
-            _mockTransactionService.Setup(x => x.ProcessPaymentTransaction(processPayment))
+            _mockTransactionService.Setup(x => x.ProcessPaymentTransaction(It.IsAny<ProcessPayment>()))
                 .ReturnsAsync(expectedResult);
 
             //Act

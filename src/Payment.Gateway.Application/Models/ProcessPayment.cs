@@ -1,6 +1,4 @@
-﻿using Payment_Gateway.Models;
-
-namespace Payment.Gateway.Application.Models
+﻿namespace Payment.Gateway.Application.Models
 {
     public class ProcessPayment
     {

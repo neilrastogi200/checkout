@@ -4,8 +4,7 @@ using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Entities;
 using Payment.Gateway.Data.Repositories;
-using Payment_Gateway.Models;
-using CardDetails = Payment_Gateway.Models.CardDetails;
+using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
 namespace Payment.Gateway.Application.Services
 {

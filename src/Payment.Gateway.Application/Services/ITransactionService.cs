@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Entities;
-using Payment_Gateway.Models;
 
 namespace Payment.Gateway.Application.Services
 {

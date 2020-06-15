@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Payment_Gateway.Models;
 
 namespace Payment.Gateway.Application.Models
 {

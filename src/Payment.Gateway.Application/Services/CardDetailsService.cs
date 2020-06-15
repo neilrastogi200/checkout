@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Repositories;
-using Payment_Gateway.Models;
 
 namespace Payment.Gateway.Application.Services
 {

@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using Payment_Gateway.Models;
+using Payment.Gateway.Application.Models;
 
 namespace Payment.Gateway.Application.Services
 {
