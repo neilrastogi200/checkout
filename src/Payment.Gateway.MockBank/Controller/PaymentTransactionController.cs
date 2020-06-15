@@ -22,11 +22,11 @@ namespace Payment.Gateway.MockBank.Controller
             {
                 case 100:
                     bankResponse.Status = PaymentTransactionStatus.Failure;
-                    bankResponse.BankReferenceIdentifier = new Guid();
+                    bankResponse.BankReferenceIdentifier = Guid.Empty;
                     break;
                     default:
                         bankResponse.Status = PaymentTransactionStatus.Success;
-                        bankResponse.BankReferenceIdentifier = new Guid();
+                        bankResponse.BankReferenceIdentifier = Guid.NewGuid();
                         break;
             }
 

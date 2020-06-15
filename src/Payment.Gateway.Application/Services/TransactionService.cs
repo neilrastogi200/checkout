@@ -1,15 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Models;
-using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Entities;
 using Payment.Gateway.Data.Repositories;
 using Payment_Gateway.Models;
+using CardDetails = Payment_Gateway.Models.CardDetails;
 
-namespace Payment_Gateway.Services
+namespace Payment.Gateway.Application.Services
 {
     public class TransactionService : ITransactionService
     {
@@ -22,19 +20,40 @@ namespace Payment_Gateway.Services
             _apiClient = apiClient;
         }
 
-        public Task<PaymentTransactionResponse> ProcessPaymentTransaction(ProcessPayment payment)
+        public async Task<ProcessPaymentTransactionResponse> ProcessPaymentTransaction(ProcessPayment payment)
         {
-            var paymentTransaction = CreatePaymentTransaction(payment);
-
-            _transactionRepository.AddPaymentTransaction(paymentTransaction);
+            ProcessPaymentData paymentData = new ProcessPaymentData()
+            {
+                 Card = new CardDetails()
+                 {
+                     CardExpiryYear = payment.Card.CardExpiryYear,
+                     CardExpiryMonth = payment.Card.CardExpiryMonth,
+                     Cvv = payment.Card.Cvv,
+                     CardHolderName = payment.Card.CardHolderName,
+                     CardNumber = payment.Card.CardNumber
+                 },
+                 Amount = payment.Amount
+                 
+            };
 
             //Call the bank httpClient
-            _apiClient.ProcessPayment(paymentTransaction);
+           var bankResponse = await _apiClient.ProcessPayment(paymentData);
 
+           var paymentTransaction = CreatePaymentTransaction(payment, bankResponse);
+
+          var transactionAdded = _transactionRepository.AddPaymentTransaction(paymentTransaction);
+
+          if (transactionAdded > 0)
+          {
+            return new ProcessPaymentTransactionResponse()
+            {
+                Result = "Successfully processed and stored the payment transaction."
+            };
+          }
             return null;
         }
 
-        private static PaymentTransaction CreatePaymentTransaction(ProcessPayment payment)
+        private static PaymentTransaction CreatePaymentTransaction(ProcessPayment payment, BankResponse bankResponse)
         {
             PaymentTransaction paymentTransaction =
                 new PaymentTransaction()
@@ -43,7 +62,8 @@ namespace Payment_Gateway.Services
                     Amount = payment.Amount,
                     CardId = payment.CardId,
                     CurrencyId = payment.CurrencyId,
-                    Status = "Failed"
+                    Status = Enum.GetName(typeof(PaymentTransactionStatus),bankResponse.Status),
+                    BankIdentifier = bankResponse.BankReferenceIdentifier
                 };
             return paymentTransaction;
         }

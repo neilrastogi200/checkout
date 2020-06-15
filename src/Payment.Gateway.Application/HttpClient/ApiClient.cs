@@ -17,14 +17,14 @@ namespace Payment.Gateway.Application.HttpClient
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<BankResponse> ProcessPayment(PaymentTransaction paymentTransaction)
+        public async Task<BankResponse> ProcessPayment(ProcessPaymentData paymentData)
         {
-            if (paymentTransaction != null)
+            if (paymentData != null)
             {
                 try
                 {
                     var client = _httpClientFactory.CreateClient("payment");
-                    var json = JsonConvert.SerializeObject(paymentTransaction);
+                    var json = JsonConvert.SerializeObject(paymentData);
                     var data = new StringContent(json, Encoding.UTF8, "application/json");
 
                     using var response =
@@ -48,6 +48,6 @@ namespace Payment.Gateway.Application.HttpClient
 
     public interface IApiClient
     {
-        Task<BankResponse> ProcessPayment(PaymentTransaction paymentTransaction);
+        Task<BankResponse> ProcessPayment(ProcessPaymentData paymentData);
     }
 }

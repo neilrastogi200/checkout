@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Repositories;
-using Payment_Gateway.Services;
 using Polly;
 using Polly.Extensions.Http;
 

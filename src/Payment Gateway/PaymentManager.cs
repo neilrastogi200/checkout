@@ -5,7 +5,6 @@ using Payment.Gateway.Application.Models;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Repositories;
 using Payment_Gateway.Models;
-using Payment_Gateway.Services;
 
 namespace Payment_Gateway
 {
@@ -48,10 +47,20 @@ namespace Payment_Gateway
                            Amount = paymentRequest.Amount,
                            CurrencyId = currency.CurrencyId,
                            CardId = cardId,
-                           MerchantId = paymentRequest.MerchantId
+                           MerchantId = paymentRequest.MerchantId,
+                           Card = new CardDetails()
+                           {
+                               CardExpiryMonth = paymentRequest.Card.CardExpiryMonth,
+                               Cvv = paymentRequest.Card.Cvv,
+                               CardHolderName = paymentRequest.Card.CardHolderName,
+                               CardNumber = paymentRequest.Card.CardNumber,
+                               CardExpiryYear = paymentRequest.Card.CardExpiryYear
+                           }
                        };
 
-                     var result = await _transactionService.ProcessPaymentTransaction(processPayment);
+                     var paymentResult = await _transactionService.ProcessPaymentTransaction(processPayment);
+
+                     return paymentResult;
                    }
 
                }
@@ -97,29 +106,31 @@ namespace Payment_Gateway
         {
            var payment = await _transactionService.GetPaymentTransaction(paymentTransactionId);
 
-           var currency = await _currencyRepository.GetCurrencyById(payment.CurrencyId);
-
-           var merchant = await _merchantRepository.GetMerchantById(payment.MerchantId);
-
-           var card = await _cardDetailsService.GetCardById(payment.CardId);
-
-           PaymentTransactionResponse paymentTransactionResponse = new PaymentTransactionResponse()
+           if (payment != null)
            {
-               Amount = payment.Amount,
-               Currency = currency.Name,
-               MerchantName = merchant.Name,
-               Card = new CardDetails()
+               var currency = await _currencyRepository.GetCurrencyById(payment.CurrencyId);
+
+               var merchant = await _merchantRepository.GetMerchantById(payment.MerchantId);
+
+               var card = await _cardDetailsService.GetCardById(payment.CardId);
+
+               PaymentTransactionResponse paymentTransactionResponse = new PaymentTransactionResponse()
                {
-                   CardExpiryMonth = card.CardExpiryMonth,
-                   CardExpiryYear = card.CardExpiryYear,
-                   CardHolderName = card.CardHolderName,
-                   CardNumber = _cardDetailsService.
-                       MaskCardNumber(card.CardNumber)
-               }
+                   Amount = payment.Amount,
+                   Currency = currency.Name,
+                   MerchantName = merchant.Name,
+                   Card = new CardDetails()
+                   {
+                       CardExpiryMonth = card.CardExpiryMonth,
+                       CardExpiryYear = card.CardExpiryYear,
+                       CardHolderName = card.CardHolderName,
+                       CardNumber = _cardDetailsService.MaskCardNumber(card.CardNumber)
+                   }
+               };
 
-           };
-
-           return paymentTransactionResponse;
+               return paymentTransactionResponse;
+           }
+           return null;
         }
     }
 }

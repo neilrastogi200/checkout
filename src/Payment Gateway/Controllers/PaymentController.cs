@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Payment_Gateway.Models;
-using Payment_Gateway.Services;
 
 namespace Payment_Gateway.Controllers
 {
@@ -35,18 +35,23 @@ namespace Payment_Gateway.Controllers
 
             var result = await _paymentManager.HandlePayment(paymentRequest);
 
-            return Ok("Successfully processed payment");
+            if (result != null)
+            {
+                return Ok(result);
+            }
+
+            return StatusCode(500);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPaymentTransaction(int transactionId)
+        public async Task<IActionResult> GetPaymentTransaction(int id)
         {
-            if (transactionId == 0)
+            if (id == 0)
             {
                 return BadRequest("TransactionId is invalid. It needs to be greater than 0.");
             }
 
-            var paymentTransaction = await _paymentManager.GetPaymentTransactionById(transactionId);
+            var paymentTransaction = await _paymentManager.GetPaymentTransactionById(id);
 
             if (paymentTransaction != null)
             {

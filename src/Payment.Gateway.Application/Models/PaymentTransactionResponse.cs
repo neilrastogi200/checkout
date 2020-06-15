@@ -1,6 +1,7 @@
 ﻿using System;
+using Payment_Gateway.Models;
 
-namespace Payment_Gateway.Models
+namespace Payment.Gateway.Application.Models
 {
     public class PaymentTransactionResponse
     {
