@@ -2,14 +2,14 @@
 using System.Collections.Generic;
 using System.Text;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Data.Entities;
 using Payment_Gateway.Models;
+using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
 namespace Payment.Gateway.Tests
 {
     public static class TestDataBuilder
     {
-        private static CardDetails CardDetails => AddValidCardData();
-
         public static CardDetails AddValidCardData()
         {
             return new CardDetails()
@@ -22,6 +22,52 @@ namespace Payment.Gateway.Tests
             };
         }
 
+        public static Data.Entities.CardDetails AddValidCardDataDTO()
+        {
+            return new Data.Entities.CardDetails()
+            {
+                CardExpiryYear = "2024",
+                CardExpiryMonth = "06",
+                CardHolderName = "Mr. Curtis",
+                Cvv = "100",
+                CardNumber = "4242424242424242"
+            };
+        }
+        public static CardDetails AddValidCardDataWithoutCvv()
+        {
+            return new CardDetails()
+            {
+                CardExpiryYear = "2024",
+                CardExpiryMonth = "06",
+                CardHolderName = "Mr. Curtis",
+                CardNumber = "4242424242424242"
+            };
+        }
+
+        public static CardDetails AddValidCardDataWithoutCvvAndMaskedCardNumber()
+        {
+            return new CardDetails()
+            {
+                CardExpiryYear = "2024",
+                CardExpiryMonth = "06",
+                CardHolderName = "Mr. Curtis",
+                CardNumber = "XXXX XXXX XXXX 4242"
+            };
+        }
+
+
+        public static CardDetails AddInvalidExpiryDateCardData()
+        {
+            return new CardDetails()
+            {
+                CardExpiryYear = "2030",
+                CardExpiryMonth = "06",
+                CardHolderName = "Mr. Curtis",
+                Cvv = "100",
+                CardNumber = "4242424242424242"
+            };
+        }
+        //ToDo: won't work resolve
         public static PaymentRequest AddValidPaymentRequest()
         {
             return new PaymentRequest()
@@ -41,7 +87,46 @@ namespace Payment.Gateway.Tests
                 CurrencyId = 1,
                 CardId = 1,
                 MerchantId = AddValidPaymentRequest().MerchantId,
-                Card = CardDetails,
+                Card = AddValidCardData(),
+            };
+        }
+
+        public static ProcessPaymentTransactionResponse AddExpectedResultSuccess()
+        {
+            return new ProcessPaymentTransactionResponse()
+            {
+                Result = "Successfully processed and stored the payment transaction."
+            };
+        }
+
+        public static ProcessPaymentTransactionResponse AddInvalidExpiryDateFailure()
+        {
+            return new ProcessPaymentTransactionResponse()
+            {
+                Result = "Payment failed to process",
+                ErrorMessage = new List<string>()
+                {
+                    new string("The card data is inValid. The expiryDate is wrong")
+                }
+            };
+        }
+
+        public static Currency AddCurrency()
+        {
+            return new Currency()
+            {
+                CurrencyId = 1,
+                Name = "GBP"
+            };
+        }
+
+        public static Merchant AddMerchant()
+        {
+            return new Merchant()
+            {
+                IsActive = true,
+                MerchantId = Guid.NewGuid(),
+                Name = "Test1"
             };
         }
     }

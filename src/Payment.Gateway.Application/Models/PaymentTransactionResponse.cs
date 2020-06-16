@@ -13,5 +13,7 @@ namespace Payment.Gateway.Application.Models
         public string MerchantName { get; set; }
 
         public Guid BankReferenceIdentifier { get; set; }
+
+        public string Status { get; set; }
     }
 }

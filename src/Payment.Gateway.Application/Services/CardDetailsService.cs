@@ -62,7 +62,7 @@ namespace Payment.Gateway.Application.Services
             var requiredMask = new String('X', cardNumber.Length - lastDigits.Length);
 
             var maskedString = string.Concat(requiredMask, lastDigits);
-            var maskedCardNumberWithSpaces = Regex.Replace(maskedString, ".{4}", "$0 ");
+            var maskedCardNumberWithSpaces = Regex.Replace(maskedString, ".{4}", "$0");
 
             return maskedCardNumberWithSpaces;
         }

@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment Gateway", "src\Payment Gateway\Payment Gateway.csproj", "{25812B49-CF58-4DE9-ABC1-C4C8D8C8CF55}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.Gateway", "src\Payment Gateway\Payment.Gateway.csproj", "{25812B49-CF58-4DE9-ABC1-C4C8D8C8CF55}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.Gateway.Tests", "test\Payment.Gateway.Tests\Payment.Gateway.Tests.csproj", "{880E0641-5D17-43B9-B90B-FCE7334E1CBA}"
 EndProject

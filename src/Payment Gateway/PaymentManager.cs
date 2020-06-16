@@ -86,19 +86,6 @@ namespace Payment_Gateway
             return null;
         }
 
-        private static CardDetails CardDetails(PaymentRequest paymentRequest)
-        {
-            var cardDetails = new CardDetails()
-            {
-                CardExpiryMonth = paymentRequest.Card.CardExpiryMonth,
-                CardExpiryYear = paymentRequest.Card.CardExpiryYear,
-                CardHolderName = paymentRequest.Card.CardHolderName,
-                CardNumber = paymentRequest.Card.CardNumber,
-                Cvv = paymentRequest.Card.Cvv
-            };
-            return cardDetails;
-        }
-
         public async Task<PaymentTransactionResponse> GetPaymentTransactionById(int paymentTransactionId)
         {
            var payment = await _transactionService.GetPaymentTransaction(paymentTransactionId);
@@ -122,7 +109,9 @@ namespace Payment_Gateway
                        CardExpiryYear = card.CardExpiryYear,
                        CardHolderName = card.CardHolderName,
                        CardNumber = _cardDetailsService.MaskCardNumber(card.CardNumber)
-                   }
+                   },
+                   BankReferenceIdentifier = payment.BankIdentifier,
+                   Status = payment.Status
                };
 
                return paymentTransactionResponse;
