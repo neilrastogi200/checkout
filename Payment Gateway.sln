@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.Gateway.Data", "src
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.Gateway.MockBank", "src\Payment.Gateway.MockBank\Payment.Gateway.MockBank.csproj", "{0CD62444-F607-48ED-B266-38B335E15463}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Payment.Gateway.Application", "src\Payment.Gateway.Application\Payment.Gateway.Application.csproj", "{CCDC4B34-EB49-4535-AD01-2866C088E826}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.Gateway.Application", "src\Payment.Gateway.Application\Payment.Gateway.Application.csproj", "{CCDC4B34-EB49-4535-AD01-2866C088E826}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Payment.Gateway.IntegrationTests", "test\Payment.Gateway.IntegrationTests\Payment.Gateway.IntegrationTests.csproj", "{064B316B-5136-4210-85C7-0650C654F5C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{29FF266B-AE68-438D-948B-71E6BD464371}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{7C81CB78-964A-45AB-988A-9B646C81D070}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,9 +45,21 @@ Global
 		{CCDC4B34-EB49-4535-AD01-2866C088E826}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCDC4B34-EB49-4535-AD01-2866C088E826}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCDC4B34-EB49-4535-AD01-2866C088E826}.Release|Any CPU.Build.0 = Release|Any CPU
+		{064B316B-5136-4210-85C7-0650C654F5C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{064B316B-5136-4210-85C7-0650C654F5C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{064B316B-5136-4210-85C7-0650C654F5C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{064B316B-5136-4210-85C7-0650C654F5C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{25812B49-CF58-4DE9-ABC1-C4C8D8C8CF55} = {29FF266B-AE68-438D-948B-71E6BD464371}
+		{880E0641-5D17-43B9-B90B-FCE7334E1CBA} = {7C81CB78-964A-45AB-988A-9B646C81D070}
+		{4A067650-811B-4A30-AAD4-E08113112930} = {29FF266B-AE68-438D-948B-71E6BD464371}
+		{0CD62444-F607-48ED-B266-38B335E15463} = {29FF266B-AE68-438D-948B-71E6BD464371}
+		{CCDC4B34-EB49-4535-AD01-2866C088E826} = {29FF266B-AE68-438D-948B-71E6BD464371}
+		{064B316B-5136-4210-85C7-0650C654F5C8} = {7C81CB78-964A-45AB-988A-9B646C81D070}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E6461C64-A033-464A-8DC2-D8892F5652CF}

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Repositories;
+using Payment_Gateway.Authentication;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -27,6 +28,18 @@ namespace Payment_Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+            //    options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+            //}).AddApiKeySupport(options => { });
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+                options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
+            }).AddScheme<ApiKeyAuthenticationOptions, ApiKeyAuthenticationHandler>(ApiKeyAuthenticationOptions.DefaultScheme,null);
+
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -50,6 +63,7 @@ namespace Payment_Gateway
             services.AddScoped<ITransactionService,TransactionService>();
             services.AddScoped<IMerchantRepository, MerchantRepository>();
             services.AddSingleton<IApiClient, ApiClient>();
+            services.AddSingleton<IGetApiKey, InMemoryGetApiKey>();
 
 
 
@@ -71,6 +85,8 @@ namespace Payment_Gateway
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseAuthentication();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();

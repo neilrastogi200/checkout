@@ -7,10 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoFixture.AutoMoq" Version="4.11.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.5" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
-    <PackageReference Include="Moq" Version="4.14.1" />
     <PackageReference Include="xunit" Version="2.4.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.0" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
@@ -18,8 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Payment Gateway\Payment Gateway.csproj" />
-    <ProjectReference Include="..\..\src\Payment.Gateway.Application\Payment.Gateway.Application.csproj" />
-    <ProjectReference Include="..\..\src\Payment.Gateway.Data\Payment.Gateway.Data.csproj" />
   </ItemGroup>
 
 </Project>
