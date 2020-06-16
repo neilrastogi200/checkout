@@ -14,7 +14,7 @@ namespace Payment.Gateway.MockBank.Controller
     public class PaymentTransactionController : ControllerBase
     {
         [HttpPost]
-        public IActionResult ProcessPaymentTransaction(MockBankPaymentRequest request)
+        public IActionResult ProcessPaymentTransaction([FromBody]MockBankPaymentRequest request)
         {
             BankResponse bankResponse = new BankResponse();
 

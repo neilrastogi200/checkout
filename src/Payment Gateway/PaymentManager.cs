@@ -37,12 +37,13 @@ namespace Payment_Gateway
             if (isCardValid)
             {
                 _logger.LogInformation("The card Details is valid");
-               var currency = await _currencyRepository.GetCurrencyByName(paymentRequest.Currency);
+                var currency = await _currencyRepository.GetCurrencyByName(paymentRequest.Currency);
                var merchant = await _merchantRepository.GetMerchantById(new Guid(paymentRequest.MerchantId));
 
                if (currency != null && merchant != null)
                {
-                   var cardId = _cardDetailsService.AddCardDetails(paymentRequest.Card);
+                   _logger.LogInformation("Currency and Merchant are valid.");
+                    var cardId = _cardDetailsService.AddCardDetails(paymentRequest.Card);
 
                    if (cardId > 0)
                    {
@@ -56,8 +57,8 @@ namespace Payment_Gateway
                        };
 
                      var paymentResult = await _transactionService.ProcessPaymentTransaction(processPayment);
-
-                     return paymentResult;
+                     _logger.LogInformation("Process Payment is successful");
+                        return paymentResult;
                    }
 
                }

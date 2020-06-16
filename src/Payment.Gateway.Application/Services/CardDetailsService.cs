@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Repositories;
 
@@ -9,10 +10,12 @@ namespace Payment.Gateway.Application.Services
     public class CardDetailsService : ICardDetailsService
     {
         private readonly ICardDetailsRepository _cardDetailsRepository;
+        private ILogger<CardDetailsService> _logger;
 
-        public CardDetailsService(ICardDetailsRepository cardDetailsRepository)
+        public CardDetailsService(ICardDetailsRepository cardDetailsRepository, ILogger<CardDetailsService> logger)
         {
             _cardDetailsRepository = cardDetailsRepository ?? throw new ArgumentNullException(nameof(cardDetailsRepository));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public bool IsValid(string expiryMonth, string expiryYear)

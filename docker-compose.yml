@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  payment.gateway:
+    image: ${DOCKER_REGISTRY-}paymentgateway
+    build:
+      context: .
+      dockerfile: src\Payment Gateway\Dockerfile

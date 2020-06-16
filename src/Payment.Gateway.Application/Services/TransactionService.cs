@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Entities;
@@ -12,11 +13,13 @@ namespace Payment.Gateway.Application.Services
     {
         private readonly ITransactionRepository _transactionRepository;
         private readonly IApiClient _apiClient;
+        private readonly ILogger<TransactionService> _logger;
 
-        public TransactionService(ITransactionRepository transactionRepository, IApiClient apiClient)
+        public TransactionService(ITransactionRepository transactionRepository, IApiClient apiClient, ILogger<TransactionService> logger)
         {
             _transactionRepository = transactionRepository;
             _apiClient = apiClient;
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ProcessPaymentTransactionResponse> ProcessPaymentTransaction(ProcessPayment payment)

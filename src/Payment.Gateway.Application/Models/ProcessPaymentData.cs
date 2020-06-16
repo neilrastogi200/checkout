@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Payment.Gateway.Application.Models
+﻿namespace Payment.Gateway.Application.Models
 {
     public class ProcessPaymentData
     {

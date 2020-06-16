@@ -5,6 +5,8 @@
     <RootNamespace>Payment_Gateway</RootNamespace>
     <UserSecretsId>e4fbe6ee-eadb-4a6d-85b4-1fe529e7f56f</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerComposeProjectPath>..\..\docker-compose.dcproj</DockerComposeProjectPath>
+    <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>

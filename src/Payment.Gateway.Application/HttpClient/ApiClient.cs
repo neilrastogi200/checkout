@@ -2,6 +2,7 @@
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Entities;
@@ -11,10 +12,12 @@ namespace Payment.Gateway.Application.HttpClient
     public class ApiClient : IApiClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ILogger<ApiClient> _logger;
 
-        public ApiClient(IHttpClientFactory httpClientFactory)
+        public ApiClient(IHttpClientFactory httpClientFactory, ILogger<ApiClient> logger)
         {
             _httpClientFactory = httpClientFactory;
+            _logger = logger;
         }
 
         public async Task<BankResponse> ProcessPayment(ProcessPaymentData paymentData)
@@ -38,6 +41,7 @@ namespace Payment.Gateway.Application.HttpClient
                 catch (AggregateException exceptions)
                 {
                     exceptions.Handle(ex => true);
+                   // _logger.LogError(exceptions);
                 }
 
             }

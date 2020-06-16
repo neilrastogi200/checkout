@@ -1,25 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.Extensions.Logging;
 using Payment_Gateway.Models;
 
 namespace Payment_Gateway.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentManager _paymentManager;
+        private ILogger<PaymentController> _logger;
 
-        public PaymentController(IPaymentManager paymentManager)
+        public PaymentController(IPaymentManager paymentManager, ILogger<PaymentController> logger)
         {
             _paymentManager = paymentManager;
+            _logger = logger;
         }
 
         [HttpPost]
@@ -60,6 +57,7 @@ namespace Payment_Gateway.Controllers
                 return Ok(paymentTransaction);
             }
 
+            _logger.LogWarning($"The transaction does not exist{id}");
             return NotFound("The transaction does not exist");
         }
     }
