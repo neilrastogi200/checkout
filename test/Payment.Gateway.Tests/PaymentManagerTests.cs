@@ -7,6 +7,7 @@ using AutoFixture.AutoMoq;
 using Castle.DynamicProxy;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Payment.Gateway.Application.Exceptions;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Entities;
@@ -22,7 +23,6 @@ namespace Payment.Gateway.Tests
     {
         private readonly Mock<ICardDetailsService> _mockCardDetailsService;
         private readonly Mock<ITransactionService> _mockTransactionService;
-        //private readonly Mock<ICardDetailsRepository> _mockCardDetailsRepository;
         private readonly Mock<ICurrencyRepository> _mockCurrencyRepository;
         private readonly Mock<IMerchantRepository> _mockMerchantRepository;
         private readonly Mock<ILogger<PaymentManager>> _mockLogger;
@@ -30,7 +30,6 @@ namespace Payment.Gateway.Tests
         private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization());
         public PaymentManagerTests()
         {
-            //_mockCardDetailsRepository = new Mock<ICardDetailsRepository>();
             _mockCardDetailsService = new Mock<ICardDetailsService>();
             _mockMerchantRepository = new Mock<IMerchantRepository>();
             _mockTransactionService = new Mock<ITransactionService>();
@@ -148,6 +147,32 @@ namespace Payment.Gateway.Tests
 
             Assert.Equal(expectedResult.ErrorMessage, actualResult.ErrorMessage);
             Assert.Equal(expectedResult.Result, actualResult.Result);
+        }
+
+        [Fact]
+        public async Task HandlePayment_When_PaymentRequest_Is_Valid_And_CardData_Is_Not_Added_To_Database_Returns_ProcessPaymentTransactionResponse_With_Errors()
+        {
+            //Arrange
+            var cardData = TestDataBuilder.AddValidCardData();
+
+            var input = new PaymentRequest()
+            {
+                Amount = 300,
+                Card = cardData,
+                Currency = "GBP",
+                MerchantId = "6662E78B-40E3-48AC-BBB5-21B97078B97A"
+            };
+
+            _mockCardDetailsService.Setup(x => x.IsValid(input.Card.CardExpiryMonth, input.Card.CardExpiryYear))
+                .Returns(true);
+
+            _mockCurrencyRepository.Setup(x => x.GetCurrencyByName(input.Currency)).ReturnsAsync(new Currency());
+
+            _mockMerchantRepository.Setup(x => x.GetMerchantById(new Guid(input.MerchantId)))
+                .ReturnsAsync(new Merchant());
+
+            //Act/Assert
+            await Assert.ThrowsAsync<DataApiException>(async () => await _paymentManager.HandlePayment(input));
         }
 
         [Fact]

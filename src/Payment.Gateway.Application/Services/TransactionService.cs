@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Payment.Gateway.Application.Exceptions;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Entities;
@@ -45,7 +46,10 @@ namespace Payment.Gateway.Application.Services
                         {Enum.GetName(typeof(PaymentTransactionSubStatus), bankResponse.Message)}
                 };
             }
-            throw new Exception("The transaction has failed to be added.");
+
+            _logger.LogError("The transaction has failed to be added", LogLevel.Error);
+            throw new DataApiException("The transaction has failed to be added");
+            
         }
 
         private static ProcessPaymentData MapProcessPaymentData(ProcessPayment payment)

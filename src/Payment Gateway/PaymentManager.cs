@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Payment.Gateway.Application.Exceptions;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Entities;
@@ -62,16 +63,15 @@ namespace Payment_Gateway
                      _logger.LogInformation("PaymentManager:HandlePayment:Process Payment has been processed.");
                         return paymentResult;
                    }
-
                }
                else
                {
-                    var payment = new ProcessPaymentTransactionResponse
-                    {
-                        Result = "Payment failed to process",
-                        ErrorMessage = new List<string> { new string("The currency or merchantId is not supported. ") }
-                    };
-                    return  payment;
+                   var payment = new ProcessPaymentTransactionResponse
+                   {
+                       Result = "Payment failed to process",
+                       ErrorMessage = new List<string> {new string("The currency or merchantId is not supported. ")}
+                   };
+                   return payment;
                }
             }
             else
@@ -86,8 +86,11 @@ namespace Payment_Gateway
                 };
             }
 
-            return null;
+            _logger.LogError("There was problem adding your card data to the database.", LogLevel.Error);
+            throw new DataApiException("There was problem adding your card data to the database.");
         }
+
+      
 
         public async Task<PaymentTransactionResponse> GetPaymentTransactionById(int paymentTransactionId)
         {

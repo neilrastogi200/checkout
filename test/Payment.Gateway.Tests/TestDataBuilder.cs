@@ -55,7 +55,6 @@ namespace Payment.Gateway.Tests
             };
         }
 
-
         public static CardDetails AddInvalidExpiryDateCardData()
         {
             return new CardDetails()
