@@ -30,51 +30,11 @@ namespace Payment_Gateway
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
-        public async Task<ProcessPaymentTransactionResponse> HandlePayment(PaymentRequest paymentRequest)
+        public async Task<ProcessPaymentTransactionResponse> HandlePaymentAsync(PaymentRequest paymentRequest)
         {
-            //Check Validation of card details
-            //Mapping > changed mind probably no need now.
-            //var cardDetails = CardDetails(paymentRequest);
             var isCardValid = _cardDetailsService.IsValid(paymentRequest.Card.CardExpiryMonth,paymentRequest.Card.CardExpiryYear);
 
-            if (isCardValid)
-            {
-                _logger.LogInformation("PaymentManager:HandlePayment:The card details is valid"); 
-                var currency = await _currencyRepository.GetCurrencyByName(paymentRequest.Currency);
-                var merchant = await _merchantRepository.GetMerchantById(new Guid(paymentRequest.MerchantId));
-
-               if (currency != null && merchant != null)
-               {
-                   _logger.LogInformation("PaymentManager:HandlePayment:Currency and Merchant are valid.");
-                    var cardId = _cardDetailsService.AddCardDetails(paymentRequest.Card);
-
-                   if (cardId > 0)
-                   {
-                       var processPayment = new ProcessPayment
-                       {
-                           Amount = paymentRequest.Amount,
-                           CurrencyId = currency.CurrencyId,
-                           CardId = cardId,
-                           MerchantId = paymentRequest.MerchantId,
-                           Card = paymentRequest.Card
-                       };
-
-                     var paymentResult = await _transactionService.ProcessPaymentTransactionAsync(processPayment);
-                     _logger.LogInformation("PaymentManager:HandlePayment:Process Payment has been processed.");
-                        return paymentResult;
-                   }
-               }
-               else
-               {
-                   var payment = new ProcessPaymentTransactionResponse
-                   {
-                       Result = "Payment failed to process",
-                       ErrorMessage = new List<string> {new string("The currency or merchantId is not supported. ")}
-                   };
-                   return payment;
-               }
-            }
-            else
+            if (!isCardValid)
             {
                 return new ProcessPaymentTransactionResponse()
                 {
@@ -86,28 +46,61 @@ namespace Payment_Gateway
                 };
             }
 
+            _logger.LogInformation("The card details is valid");
+            var currency = await _currencyRepository.GetCurrencyByNameAsync(paymentRequest.Currency);
+            var merchant = await _merchantRepository.GetMerchantByIdAsync(new Guid(paymentRequest.MerchantId));
+
+            if (currency != null && merchant != null)
+            {
+                _logger.LogInformation("Currency and Merchant are valid.");
+                var cardId = _cardDetailsService.AddCardDetails(paymentRequest.Card);
+
+                if (cardId > 0)
+                {
+                    var processPayment = new ProcessPayment
+                    {
+                        Amount = paymentRequest.Amount,
+                        CurrencyId = currency.CurrencyId,
+                        CardId = cardId,
+                        MerchantId = paymentRequest.MerchantId,
+                        Card = paymentRequest.Card
+                    };
+
+                    var paymentResult = await _transactionService.ProcessPaymentTransactionAsync(processPayment);
+                    _logger.LogInformation("PaymentManager:HandlePayment:Process Payment has been processed.");
+                    return paymentResult;
+                }
+            }
+            else
+            {
+                var payment = new ProcessPaymentTransactionResponse
+                {
+                    Result = "Payment failed to process",
+                    ErrorMessage = new List<string> {new string("The currency or merchantId is not supported. ")}
+                };
+                return payment;
+            }
+
             _logger.LogError("There was problem adding your card data to the database.", LogLevel.Error);
             throw new DataApiException("There was problem adding your card data to the database.");
         }
 
       
 
-        public async Task<PaymentTransactionResponse> GetPaymentTransactionById(int paymentTransactionId)
+        public async Task<PaymentTransactionResponse> GetPaymentTransactionByIdAsync(int paymentTransactionId)
         {
            var payment = await _transactionService.GetPaymentTransaction(paymentTransactionId);
 
-           if (payment != null)
+           if (payment == null) return null;
+           var currency = await _currencyRepository.GetCurrencyByIdAsync(payment.CurrencyId);
+           var merchant = await _merchantRepository.GetMerchantByIdAsync(payment.MerchantId);
+           var card = await _cardDetailsService.GetCardByIdAsync(payment.CardId);
+
+           if (currency != null && merchant != null && card != null)
            {
-               var currency = await _currencyRepository.GetCurrencyById(payment.CurrencyId);
-               var merchant = await _merchantRepository.GetMerchantById(payment.MerchantId);
-               var card = await _cardDetailsService.GetCardById(payment.CardId);
+               var paymentTransactionResponse = MapPaymentTransactionResponse(payment, currency, merchant, card);
 
-               if (currency != null && merchant != null && card != null)
-               {
-                   var paymentTransactionResponse = MapPaymentTransactionResponse(payment, currency, merchant, card);
-
-                   return paymentTransactionResponse;
-               }
+               return paymentTransactionResponse;
            }
            return null;
         }

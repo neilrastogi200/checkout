@@ -6,7 +6,7 @@ namespace Payment_Gateway
 {
     public interface IPaymentManager
     {
-        Task<ProcessPaymentTransactionResponse> HandlePayment(PaymentRequest paymentRequest);
-        Task<PaymentTransactionResponse> GetPaymentTransactionById(int paymentTransactionId);
+        Task<ProcessPaymentTransactionResponse> HandlePaymentAsync(PaymentRequest paymentRequest);
+        Task<PaymentTransactionResponse> GetPaymentTransactionByIdAsync(int paymentTransactionId);
     }
 }

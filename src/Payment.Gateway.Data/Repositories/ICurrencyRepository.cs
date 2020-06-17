@@ -6,10 +6,10 @@ namespace Payment.Gateway.Data.Repositories
 {
     public interface ICurrencyRepository
     {
-        Task<Currency> GetCurrencyByName(string currency);
+        Task<Currency> GetCurrencyByNameAsync(string currency);
 
-        Task<Currency> GetCurrencyById(int currencyId);
+        Task<Currency> GetCurrencyByIdAsync(int currencyId);
 
-        Task<IEnumerable<Currency>> GetAllCurrencies();
+        Task<IEnumerable<Currency>> GetAllCurrenciesAsync();
     }
 }

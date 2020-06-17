@@ -36,22 +36,19 @@ namespace Payment_Gateway.Authentication
 
             var existingApiKey = await _getApiKey.Execute(providedApiKey);
 
-            if (existingApiKey != null)
+            if (existingApiKey == null) return AuthenticateResult.Fail("Invalid API Key provided.");
+            
+            var claims = new List<Claim>
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, existingApiKey.Key)
-                };
+                new Claim(ClaimTypes.Name, existingApiKey.Key)
+            };
 
-                var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
-                var identities = new List<ClaimsIdentity> {identity};
-                var principal = new ClaimsPrincipal(identities);
-                var ticket = new AuthenticationTicket(principal, Options.Scheme);
+            var identity = new ClaimsIdentity(claims, Options.AuthenticationType);
+            var identities = new List<ClaimsIdentity> {identity};
+            var principal = new ClaimsPrincipal(identities);
+            var ticket = new AuthenticationTicket(principal, Options.Scheme);
 
-                return AuthenticateResult.Success(ticket);
-            }
-
-            return AuthenticateResult.Fail("Invalid API Key provided.");
+            return AuthenticateResult.Success(ticket);
         }
 
     }

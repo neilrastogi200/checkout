@@ -7,7 +7,7 @@ namespace Payment.Gateway.Application.Services
     {
         bool IsValid(string expiryMonth, string expiryYear);
         int AddCardDetails(CardDetails card);
-        Task<CardDetails> GetCardById(int paymentCardId);
+        Task<CardDetails> GetCardByIdAsync(int paymentCardId);
         string MaskCardNumber(string cardNumber);
     }
 }

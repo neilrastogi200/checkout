@@ -8,7 +8,7 @@ namespace Payment.Gateway.Data.Repositories
 {
     public interface IMerchantRepository
     {
-        Task<Merchant> GetMerchantById(Guid merchantId);
+        Task<Merchant> GetMerchantByIdAsync(Guid merchantId);
 
     }
 }

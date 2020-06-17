@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Payment_Gateway.Models;
@@ -7,11 +8,11 @@ namespace Payment_Gateway.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class PaymentController : ControllerBase
     {
         private readonly IPaymentManager _paymentManager;
-        private ILogger<PaymentController> _logger;
+        private readonly ILogger<PaymentController> _logger;
 
         public PaymentController(IPaymentManager paymentManager, ILogger<PaymentController> logger)
         {
@@ -32,7 +33,7 @@ namespace Payment_Gateway.Controllers
                 return BadRequest("The amount field needs to be greater than zero");
             }
 
-            var result = await _paymentManager.HandlePayment(paymentRequest);
+            var result = await _paymentManager.HandlePaymentAsync(paymentRequest);
 
             return Ok(result);
         }
@@ -45,7 +46,7 @@ namespace Payment_Gateway.Controllers
                 return BadRequest("TransactionId is invalid. It needs to be greater than 0.");
             }
 
-            var paymentTransaction = await _paymentManager.GetPaymentTransactionById(id);
+            var paymentTransaction = await _paymentManager.GetPaymentTransactionByIdAsync(id);
 
             if (paymentTransaction != null)
             {

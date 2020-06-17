@@ -25,15 +25,16 @@ namespace Payment.Gateway.Application.Services
         }
 
         public async Task<ProcessPaymentTransactionResponse> ProcessPaymentTransactionAsync(ProcessPayment payment)
-        { 
-            var paymentData = MapProcessPaymentData(payment);
-            var bankResponse = await _apiClient.ProcessPayment(paymentData);
-            var paymentTransaction = CreatePaymentTransaction(payment, bankResponse);
-
+        {
+            var paymentTransaction = CreatePaymentTransaction(payment);
             var transactionAdded = _transactionRepository.AddPaymentTransaction(paymentTransaction);
 
             if (transactionAdded > 0)
             {
+                var paymentData = MapProcessPaymentData(payment);
+                var bankResponse = await _apiClient.ProcessPayment(paymentData);
+                UpdateTransaction(paymentTransaction, bankResponse);
+
                 if (Enum.GetName(typeof(PaymentTransactionStatus), bankResponse.Status) == "Success")
                   return new ProcessPaymentTransactionResponse
                   {
@@ -49,7 +50,14 @@ namespace Payment.Gateway.Application.Services
 
             _logger.LogError("The transaction has failed to be added", LogLevel.Error);
             throw new DataApiException("The transaction has failed to be added");
-            
+        }
+
+        private void UpdateTransaction(PaymentTransaction paymentTransaction, BankResponse bankResponse)
+        {
+            paymentTransaction.Status = Enum.GetName(typeof(PaymentTransactionStatus), bankResponse.Status);
+            paymentTransaction.BankIdentifier = bankResponse.BankReferenceIdentifier;
+
+            _transactionRepository.UpdateTransaction(paymentTransaction);
         }
 
         private static ProcessPaymentData MapProcessPaymentData(ProcessPayment payment)
@@ -69,7 +77,7 @@ namespace Payment.Gateway.Application.Services
             return paymentData;
         }
 
-        private PaymentTransaction CreatePaymentTransaction(ProcessPayment payment, BankResponse bankResponse)
+        private PaymentTransaction CreatePaymentTransaction(ProcessPayment payment)
         {
             var paymentTransaction =
                 new PaymentTransaction()
@@ -78,15 +86,13 @@ namespace Payment.Gateway.Application.Services
                     Amount = payment.Amount,
                     CardId = payment.CardId,
                     CurrencyId = payment.CurrencyId,
-                    Status = Enum.GetName(typeof(PaymentTransactionStatus),bankResponse.Status),
-                    BankIdentifier = bankResponse.BankReferenceIdentifier
                 };
             return paymentTransaction;
         }
 
         public async Task<PaymentTransaction> GetPaymentTransaction(int paymentTransactionId)
         {
-           var paymentTransaction = await _transactionRepository.GetPaymentTransaction(paymentTransactionId);
+           var paymentTransaction = await _transactionRepository.GetPaymentTransactionAsync(paymentTransactionId);
 
            return paymentTransaction;
         }

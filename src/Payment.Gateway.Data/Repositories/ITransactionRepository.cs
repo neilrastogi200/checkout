@@ -7,7 +7,8 @@ namespace Payment.Gateway.Data.Repositories
     public interface ITransactionRepository
     {
         Task<IEnumerable<PaymentTransaction>> GetAllPaymentTransactions();
-        Task<PaymentTransaction> GetPaymentTransaction(int transactionId);
+        Task<PaymentTransaction> GetPaymentTransactionAsync(int transactionId);
         int AddPaymentTransaction(PaymentTransaction paymentTransaction);
+        void UpdateTransaction(PaymentTransaction paymentTransaction);
     }
 }

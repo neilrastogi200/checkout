@@ -18,17 +18,17 @@ namespace Payment.Gateway.Data.Repositories
             _paymentContext = paymentContext;
         }
 
-        public async Task<Currency> GetCurrencyByName(string currency)
+        public async Task<Currency> GetCurrencyByNameAsync(string currency)
         {
             return await _paymentContext.Currencies.Where(x => x.Name == currency).FirstOrDefaultAsync();
         }
 
-        public async Task<Currency> GetCurrencyById(int currencyId)
+        public async Task<Currency> GetCurrencyByIdAsync(int currencyId)
         {
             return await _paymentContext.FindAsync<Currency>(currencyId);
         }
 
-        public async Task<IEnumerable<Currency>> GetAllCurrencies()
+        public async Task<IEnumerable<Currency>> GetAllCurrenciesAsync()
         {
             return await _paymentContext.Currencies.ToListAsync();
         }

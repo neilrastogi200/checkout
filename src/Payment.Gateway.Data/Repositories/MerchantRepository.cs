@@ -14,7 +14,7 @@ namespace Payment.Gateway.Data.Repositories
             _paymentContext = paymentContext;
         }
 
-        public async Task<Merchant> GetMerchantById(Guid merchantId)
+        public async Task<Merchant> GetMerchantByIdAsync(Guid merchantId)
         {
             return await _paymentContext.Merchants.FindAsync(merchantId);
         }

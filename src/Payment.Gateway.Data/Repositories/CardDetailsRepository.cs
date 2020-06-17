@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Payment.Gateway.Data.Entities;
 
 namespace Payment.Gateway.Data.Repositories
@@ -25,12 +21,12 @@ namespace Payment.Gateway.Data.Repositories
             return id;
         }
 
-        public async Task<CardDetails> GetCardDetails(int cardId)
+        public async Task<CardDetails> GetCardDetailsAsync(int cardId)
         {
             return await _paymentContext.FindAsync<CardDetails>(cardId);
         }
 
-        public async Task<CardDetails> GetCardByCardnumber(string cardNumber)
+        public async Task<CardDetails> GetCardByCardnumberAsync(string cardNumber)
         {
             return await _paymentContext.FindAsync<CardDetails>(cardNumber);
         }

@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
-using Castle.DynamicProxy;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Payment.Gateway.Application.Exceptions;
@@ -70,9 +68,9 @@ namespace Payment.Gateway.Tests
 
             _mockCardDetailsService.Setup(x => x.AddCardDetails(input.Card)).Returns(1);
 
-            _mockCurrencyRepository.Setup(x => x.GetCurrencyByName(input.Currency)).ReturnsAsync(currency);
+            _mockCurrencyRepository.Setup(x => x.GetCurrencyByNameAsync(input.Currency)).ReturnsAsync(currency);
 
-            _mockMerchantRepository.Setup(x => x.GetMerchantById(new Guid(input.MerchantId)))
+            _mockMerchantRepository.Setup(x => x.GetMerchantByIdAsync(new Guid(input.MerchantId)))
                 .ReturnsAsync(new Merchant());
 
             _mockTransactionService.Setup(x => x.ProcessPaymentTransactionAsync(It.Is<ProcessPayment>(y =>
@@ -81,7 +79,7 @@ namespace Payment.Gateway.Tests
                 .ReturnsAsync(expectedResult);
 
             //Act
-            var actualResult = await _paymentManager.HandlePayment(input);
+            var actualResult = await _paymentManager.HandlePaymentAsync(input);
 
             Assert.Equal(expectedResult,actualResult);
         }
@@ -106,7 +104,7 @@ namespace Payment.Gateway.Tests
                 .Returns(false);
 
             //Act
-            var actualResult = await _paymentManager.HandlePayment(input);
+            var actualResult = await _paymentManager.HandlePaymentAsync(input);
 
             Assert.Equal(expectedResult.ErrorMessage, actualResult.ErrorMessage);
             Assert.Equal(expectedResult.Result,actualResult.Result);
@@ -143,7 +141,7 @@ namespace Payment.Gateway.Tests
                 .Returns(true);
 
             //Act
-            var actualResult = await _paymentManager.HandlePayment(input);
+            var actualResult = await _paymentManager.HandlePaymentAsync(input);
 
             Assert.Equal(expectedResult.ErrorMessage, actualResult.ErrorMessage);
             Assert.Equal(expectedResult.Result, actualResult.Result);
@@ -166,13 +164,13 @@ namespace Payment.Gateway.Tests
             _mockCardDetailsService.Setup(x => x.IsValid(input.Card.CardExpiryMonth, input.Card.CardExpiryYear))
                 .Returns(true);
 
-            _mockCurrencyRepository.Setup(x => x.GetCurrencyByName(input.Currency)).ReturnsAsync(new Currency());
+            _mockCurrencyRepository.Setup(x => x.GetCurrencyByNameAsync(input.Currency)).ReturnsAsync(new Currency());
 
-            _mockMerchantRepository.Setup(x => x.GetMerchantById(new Guid(input.MerchantId)))
+            _mockMerchantRepository.Setup(x => x.GetMerchantByIdAsync(new Guid(input.MerchantId)))
                 .ReturnsAsync(new Merchant());
 
             //Act/Assert
-            await Assert.ThrowsAsync<DataApiException>(async () => await _paymentManager.HandlePayment(input));
+            await Assert.ThrowsAsync<DataApiException>(async () => await _paymentManager.HandlePaymentAsync(input));
         }
 
         [Fact]
@@ -222,13 +220,13 @@ namespace Payment.Gateway.Tests
             };
 
             _mockTransactionService.Setup(x => x.GetPaymentTransaction(input)).ReturnsAsync(payment);
-            _mockCurrencyRepository.Setup(x => x.GetCurrencyById(currency.CurrencyId)).ReturnsAsync(currency);
-            _mockMerchantRepository.Setup(x => x.GetMerchantById(merchantIdentifier)).ReturnsAsync(merchant);
-            _mockCardDetailsService.Setup(x => x.GetCardById(payment.CardId)).ReturnsAsync(cardDataApplication);
+            _mockCurrencyRepository.Setup(x => x.GetCurrencyByIdAsync(currency.CurrencyId)).ReturnsAsync(currency);
+            _mockMerchantRepository.Setup(x => x.GetMerchantByIdAsync(merchantIdentifier)).ReturnsAsync(merchant);
+            _mockCardDetailsService.Setup(x => x.GetCardByIdAsync(payment.CardId)).ReturnsAsync(cardDataApplication);
             _mockCardDetailsService.Setup(x => x.MaskCardNumber(payment.Card.CardNumber)).Returns(maskedCardNumber);
 
             //Act
-           var actualResult = await _paymentManager.GetPaymentTransactionById(input);
+           var actualResult = await _paymentManager.GetPaymentTransactionByIdAsync(input);
 
            //Assert
             Assert.Equal(expectedResult.Card.CardExpiryMonth,actualResult.Card.CardExpiryMonth);
@@ -249,7 +247,7 @@ namespace Payment.Gateway.Tests
             var input = 8;
 
             //Act
-            var actualResult = await _paymentManager.GetPaymentTransactionById(input);
+            var actualResult = await _paymentManager.GetPaymentTransactionByIdAsync(input);
 
             //Assert
             Assert.Null(actualResult);

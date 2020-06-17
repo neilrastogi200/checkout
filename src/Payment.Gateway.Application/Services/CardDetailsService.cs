@@ -38,7 +38,7 @@ namespace Payment.Gateway.Application.Services
 
         private Data.Entities.CardDetails MapCardDetails(CardDetails card)
         {
-            Data.Entities.CardDetails cardDetails = new Data.Entities.CardDetails()
+            var cardDetails = new Data.Entities.CardDetails()
             {
                 CardExpiryMonth = card.CardExpiryMonth,
                 CardExpiryYear = card.CardExpiryYear,
@@ -49,9 +49,9 @@ namespace Payment.Gateway.Application.Services
             return cardDetails;
         }
 
-        public async Task<CardDetails> GetCardById(int paymentCardId)
+        public async Task<CardDetails> GetCardByIdAsync(int paymentCardId)
         {
-           var cardPaymentDetails = await _cardDetailsRepository.GetCardDetails(paymentCardId);
+           var cardPaymentDetails = await _cardDetailsRepository.GetCardDetailsAsync(paymentCardId);
 
            var cardDetails = MapCardDetailsFromDto(cardPaymentDetails);
 
