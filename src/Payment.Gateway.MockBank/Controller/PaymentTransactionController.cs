@@ -18,7 +18,7 @@ namespace Payment.Gateway.MockBank.Controller
             {
                 case 100:
                     bankResponse.Status = PaymentTransactionStatus.Failure;
-                    bankResponse.Message = PaymentTransactionSubStatus.PaymentFailedToProcessed;
+                    bankResponse.Message = PaymentTransactionSubStatus.PaymentFailedToProcess;
                     bankResponse.BankReferenceIdentifier = Guid.Empty;
                     break;
                     default:

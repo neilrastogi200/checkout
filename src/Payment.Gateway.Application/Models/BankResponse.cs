@@ -17,7 +17,7 @@ namespace Payment.Gateway.Application.Models
 
     public enum PaymentTransactionSubStatus
     {
-        PaymentFailedToProcessed,
+        PaymentFailedToProcess,
         PaymentSuccessful
     }
 }

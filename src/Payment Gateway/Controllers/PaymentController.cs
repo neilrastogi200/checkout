@@ -34,12 +34,7 @@ namespace Payment_Gateway.Controllers
 
             var result = await _paymentManager.HandlePayment(paymentRequest);
 
-            if (result != null)
-            {
-                return Ok(result);
-            }
-
-            return StatusCode(500);
+            return Ok(result);
         }
 
         [HttpGet]

@@ -22,7 +22,7 @@ namespace Payment.Gateway.Tests
     {
         private readonly Mock<ICardDetailsService> _mockCardDetailsService;
         private readonly Mock<ITransactionService> _mockTransactionService;
-        private readonly Mock<ICardDetailsRepository> _mockCardDetailsRepository;
+        //private readonly Mock<ICardDetailsRepository> _mockCardDetailsRepository;
         private readonly Mock<ICurrencyRepository> _mockCurrencyRepository;
         private readonly Mock<IMerchantRepository> _mockMerchantRepository;
         private readonly Mock<ILogger<PaymentManager>> _mockLogger;
@@ -30,7 +30,7 @@ namespace Payment.Gateway.Tests
         private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization());
         public PaymentManagerTests()
         {
-            _mockCardDetailsRepository = new Mock<ICardDetailsRepository>();
+            //_mockCardDetailsRepository = new Mock<ICardDetailsRepository>();
             _mockCardDetailsService = new Mock<ICardDetailsService>();
             _mockMerchantRepository = new Mock<IMerchantRepository>();
             _mockTransactionService = new Mock<ITransactionService>();

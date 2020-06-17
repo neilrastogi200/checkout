@@ -26,7 +26,6 @@ namespace Payment.Gateway.Application.Services
         public async Task<ProcessPaymentTransactionResponse> ProcessPaymentTransactionAsync(ProcessPayment payment)
         { 
             var paymentData = MapProcessPaymentData(payment);
-            //Call the bank httpClient
             var bankResponse = await _apiClient.ProcessPayment(paymentData);
             var paymentTransaction = CreatePaymentTransaction(payment, bankResponse);
 
@@ -41,12 +40,12 @@ namespace Payment.Gateway.Application.Services
                   };
                 return new ProcessPaymentTransactionResponse
                 {
-                    Result = paymentTransaction.Status + bankResponse.Message,
+                    Result = paymentTransaction.Status,
                     ErrorMessage = new List<string>
                         {Enum.GetName(typeof(PaymentTransactionSubStatus), bankResponse.Message)}
                 };
             }
-            return null;
+            throw new Exception("The transaction has failed to be added.");
         }
 
         private static ProcessPaymentData MapProcessPaymentData(ProcessPayment payment)

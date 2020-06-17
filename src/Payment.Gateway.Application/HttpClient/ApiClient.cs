@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Payment.Gateway.Application.Models;
-using Payment.Gateway.Data.Entities;
 
 namespace Payment.Gateway.Application.HttpClient
 {
@@ -40,18 +39,13 @@ namespace Payment.Gateway.Application.HttpClient
                 }
                 catch (AggregateException exceptions)
                 {
+                    _logger.Log(LogLevel.Error, exceptions.Message);
                     exceptions.Handle(ex => true);
-                   // _logger.LogError(exceptions);
                 }
 
             }
 
             return null;
         }
-    }
-
-    public interface IApiClient
-    {
-        Task<BankResponse> ProcessPayment(ProcessPaymentData paymentData);
     }
 }
