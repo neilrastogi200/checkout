@@ -7,7 +7,6 @@ namespace Payment.Gateway.Application.Exceptions
     {
         public DataApiException(string message) : base(message)
         {
-            
         }
         public HttpStatusCode ErrorStatusCode { get; set; } = HttpStatusCode.InternalServerError;
         public string Error { get; set; }
