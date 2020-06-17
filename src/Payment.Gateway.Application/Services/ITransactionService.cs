@@ -6,7 +6,7 @@ namespace Payment.Gateway.Application.Services
 {
     public interface ITransactionService
     {
-        Task<ProcessPaymentTransactionResponse> ProcessPaymentTransaction(ProcessPayment payment);
+        Task<ProcessPaymentTransactionResponse> ProcessPaymentTransactionAsync(ProcessPayment payment);
         Task<PaymentTransaction> GetPaymentTransaction(int paymentTransactionId);
     }
 }

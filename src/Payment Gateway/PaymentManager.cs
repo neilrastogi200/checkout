@@ -4,8 +4,10 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Application.Services;
+using Payment.Gateway.Data.Entities;
 using Payment.Gateway.Data.Repositories;
 using Payment_Gateway.Models;
+using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
 namespace Payment_Gateway
 {
@@ -36,9 +38,9 @@ namespace Payment_Gateway
 
             if (isCardValid)
             {
-                _logger.LogInformation("The card Details is valid");
+                _logger.LogInformation("The card Details is valid"); 
                 var currency = await _currencyRepository.GetCurrencyByName(paymentRequest.Currency);
-               var merchant = await _merchantRepository.GetMerchantById(new Guid(paymentRequest.MerchantId));
+                var merchant = await _merchantRepository.GetMerchantById(new Guid(paymentRequest.MerchantId));
 
                if (currency != null && merchant != null)
                {
@@ -56,8 +58,8 @@ namespace Payment_Gateway
                            Card = paymentRequest.Card
                        };
 
-                     var paymentResult = await _transactionService.ProcessPaymentTransaction(processPayment);
-                     _logger.LogInformation("Process Payment is successful");
+                     var paymentResult = await _transactionService.ProcessPaymentTransactionAsync(processPayment);
+                     _logger.LogInformation("Process Payment has been processed.");
                         return paymentResult;
                    }
 
@@ -94,30 +96,38 @@ namespace Payment_Gateway
            if (payment != null)
            {
                var currency = await _currencyRepository.GetCurrencyById(payment.CurrencyId);
-
                var merchant = await _merchantRepository.GetMerchantById(payment.MerchantId);
-
                var card = await _cardDetailsService.GetCardById(payment.CardId);
 
-               PaymentTransactionResponse paymentTransactionResponse = new PaymentTransactionResponse()
+               if (currency != null && merchant != null && card != null)
                {
-                   Amount = payment.Amount,
-                   Currency = currency.Name,
-                   MerchantName = merchant.Name,
-                   Card = new CardDetails()
-                   {
-                       CardExpiryMonth = card.CardExpiryMonth,
-                       CardExpiryYear = card.CardExpiryYear,
-                       CardHolderName = card.CardHolderName,
-                       CardNumber = _cardDetailsService.MaskCardNumber(card.CardNumber)
-                   },
-                   BankReferenceIdentifier = payment.BankIdentifier,
-                   Status = payment.Status
-               };
+                   var paymentTransactionResponse = MapPaymentTransactionResponse(payment, currency, merchant, card);
 
-               return paymentTransactionResponse;
+                   return paymentTransactionResponse;
+               }
            }
            return null;
+        }
+
+        private PaymentTransactionResponse MapPaymentTransactionResponse(PaymentTransaction payment, Currency currency,
+            Merchant merchant, CardDetails card)
+        {
+            var paymentTransactionResponse = new PaymentTransactionResponse()
+            {
+                Amount = payment.Amount,
+                Currency = currency.Name,
+                MerchantName = merchant.Name,
+                Card = new CardDetails()
+                {
+                    CardExpiryMonth = card.CardExpiryMonth,
+                    CardExpiryYear = card.CardExpiryYear,
+                    CardHolderName = card.CardHolderName,
+                    CardNumber = _cardDetailsService.MaskCardNumber(card.CardNumber)
+                },
+                BankReferenceIdentifier = payment.BankIdentifier,
+                Status = payment.Status
+            };
+            return paymentTransactionResponse;
         }
     }
 }

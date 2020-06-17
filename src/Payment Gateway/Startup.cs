@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Payment.Gateway.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Repositories;
@@ -43,28 +44,50 @@ namespace Payment_Gateway
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new Microsoft.OpenApi.Models.OpenApiInfo { Title = "Web Api", Version = "V1" });
-            }); 
-            
-            services.AddHttpClient("payment", c =>
-            {
-                c.BaseAddress = new Uri("https://localhost:5001");
-                c.DefaultRequestHeaders.Add("Accept", "application/json");
-            }).AddPolicyHandler(GetRetryPolicy());
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "Web Api", Version = "V1"});
+
+                c.AddSecurityDefinition("X-Api-Key", new OpenApiSecurityScheme
+                {
+                    Description = "Api key needed to access the endpoints. X-Api-Key: My_API_Key",
+                    In = ParameterLocation.Header,
+                    Name = "X-Api-Key",
+                    Type = SecuritySchemeType.ApiKey
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Name = "X-Api-Key",
+                            Type = SecuritySchemeType.ApiKey,
+                            In = ParameterLocation.Header,
+                            Reference = new OpenApiReference {Type = ReferenceType.SecurityScheme, Id = "X-Api-Key"},
+                        },
+                        new string[] { }
+                    }
+                });
+
+            });
+
+                services.AddHttpClient("payment", c =>
+                {
+                    c.BaseAddress = new Uri("https://localhost:5001");
+                    c.DefaultRequestHeaders.Add("Accept", "application/json");
+                }).AddPolicyHandler(GetRetryPolicy());
 
 
-            services.AddDbContext<PaymentContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("PaymentConnection")));
-            services.AddScoped<ITransactionRepository, TransactionRepository>();
-            services.AddScoped<ICardDetailsRepository, CardDetailsRepository>();
-            services.AddScoped<ICurrencyRepository, CurrencyRepository>();
-            services.AddScoped<IPaymentManager, PaymentManager>();
-            services.AddScoped<ICardDetailsService, CardDetailsService>();
-            services.AddScoped<ITransactionService,TransactionService>();
-            services.AddScoped<IMerchantRepository, MerchantRepository>();
-            services.AddSingleton<IApiClient, ApiClient>();
-            services.AddSingleton<IGetApiKey, InMemoryGetApiKey>();
-
+                services.AddDbContext<PaymentContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("PaymentConnection")));
+                services.AddScoped<ITransactionRepository, TransactionRepository>();
+                services.AddScoped<ICardDetailsRepository, CardDetailsRepository>();
+                services.AddScoped<ICurrencyRepository, CurrencyRepository>();
+                services.AddScoped<IPaymentManager, PaymentManager>();
+                services.AddScoped<ICardDetailsService, CardDetailsService>();
+                services.AddScoped<ITransactionService, TransactionService>();
+                services.AddScoped<IMerchantRepository, MerchantRepository>();
+                services.AddSingleton<IApiClient, ApiClient>();
+                services.AddSingleton<IGetApiKey, InMemoryGetApiKey>();
 
 
         }

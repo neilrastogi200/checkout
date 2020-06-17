@@ -4,6 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using Castle.DynamicProxy;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Payment.Gateway.Application.Models;
@@ -75,7 +76,7 @@ namespace Payment.Gateway.Tests
             _mockMerchantRepository.Setup(x => x.GetMerchantById(new Guid(input.MerchantId)))
                 .ReturnsAsync(new Merchant());
 
-            _mockTransactionService.Setup(x => x.ProcessPaymentTransaction(It.Is<ProcessPayment>(y =>
+            _mockTransactionService.Setup(x => x.ProcessPaymentTransactionAsync(It.Is<ProcessPayment>(y =>
                     y.Card == processPayment.Card && y.MerchantId == processPayment.MerchantId &&
                     y.CurrencyId == processPayment.CurrencyId && y.CardId == processPayment.CardId)))
                 .ReturnsAsync(expectedResult);
@@ -196,7 +197,6 @@ namespace Payment.Gateway.Tests
             };
 
             _mockTransactionService.Setup(x => x.GetPaymentTransaction(input)).ReturnsAsync(payment);
-
             _mockCurrencyRepository.Setup(x => x.GetCurrencyById(currency.CurrencyId)).ReturnsAsync(currency);
             _mockMerchantRepository.Setup(x => x.GetMerchantById(merchantIdentifier)).ReturnsAsync(merchant);
             _mockCardDetailsService.Setup(x => x.GetCardById(payment.CardId)).ReturnsAsync(cardDataApplication);
@@ -215,6 +215,19 @@ namespace Payment.Gateway.Tests
             Assert.Equal(expectedResult.Currency, actualResult.Currency);
             Assert.Equal(expectedResult.BankReferenceIdentifier, actualResult.BankReferenceIdentifier);
             Assert.Equal(expectedResult.MerchantName, actualResult.MerchantName);
+        }
+
+        [Fact]
+        public async void GetPaymentTransactionId_When_TransactionId_Does_Not_Exist_Returns_Null()
+        {
+            //Arrange
+            var input = 8;
+
+            //Act
+            var actualResult = await _paymentManager.GetPaymentTransactionById(input);
+
+            //Assert
+            Assert.Null(actualResult);
         }
     }
 }
