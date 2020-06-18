@@ -2,7 +2,17 @@ version: '3.4'
 
 services:
   payment.gateway:
-    image: ${DOCKER_REGISTRY-}paymentgateway
+    image: neil177/paymentgateway:v1.0
     build:
       context: .
       dockerfile: src\Payment Gateway\Dockerfile
+    ports:
+      - '8000:80'
+  payment.gateway.mockbank:
+    image: neil177/paymentgatewaymockbank:v1.0
+    build:
+      context: .
+      dockerfile: src\Payment.Gateway.MockBank\Dockerfile
+    ports:
+      - '9000:80'
+

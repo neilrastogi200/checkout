@@ -30,12 +30,6 @@ namespace Payment_Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddAuthentication(options =>
-            //{
-            //    options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
-            //    options.DefaultChallengeScheme = ApiKeyAuthenticationOptions.DefaultScheme;
-            //}).AddApiKeySupport(options => { });
-
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = ApiKeyAuthenticationOptions.DefaultScheme;
@@ -97,7 +91,6 @@ namespace Payment_Gateway
         {
            return HttpPolicyExtensions
                 .HandleTransientHttpError()
-                .OrResult(msg => msg.StatusCode == System.Net.HttpStatusCode.NotFound)
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2,
                     retryAttempt)));
         }

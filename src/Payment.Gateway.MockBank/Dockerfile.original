@@ -11,8 +11,6 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-nanoserver-1903 AS build
 WORKDIR /src
 COPY ["src/Payment.Gateway.MockBank/Payment.Gateway.MockBank.csproj", "src/Payment.Gateway.MockBank/"]
-COPY ["src/Payment.Gateway.Application/Payment.Gateway.Application.csproj", "src/Payment.Gateway.Application/"]
-COPY ["src/Payment.Gateway.Data/Payment.Gateway.Data.csproj", "src/Payment.Gateway.Data/"]
 RUN dotnet restore "src/Payment.Gateway.MockBank/Payment.Gateway.MockBank.csproj"
 COPY . .
 WORKDIR "/src/src/Payment.Gateway.MockBank"

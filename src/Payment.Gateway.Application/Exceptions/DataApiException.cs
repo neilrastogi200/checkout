@@ -5,6 +5,9 @@ namespace Payment.Gateway.Application.Exceptions
 {
     public class DataApiException : Exception
     {
+        public DataApiException()
+        {
+        }
         public DataApiException(string message) : base(message)
         {
         }
