@@ -1,7 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using AutoFixture;
-using AutoFixture.AutoMoq;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Payment.Gateway.Application;

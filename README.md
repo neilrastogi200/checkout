@@ -30,7 +30,7 @@ A sample request below:
 }
 ```
 
-##Response##
+**Response**
 
 A sample response is below:
 
@@ -75,3 +75,7 @@ api/Payment/GetPaymentTransaction?id=13
 ### Authentication
 
 All requests require an  X-Api-Key header value, which in this case for the purposes of using app I will inform you of the value which is 072413ac-9b28-401f-a0d1-8512d7609dd8. I wouldn't normally do this of course but this is a tech test so certain information has to be given that wouldn't normally be done in a real word scenario. 
+
+### Database
+
+The database will need to be created for the application to be tested locally. I used EF.Core migrations, so you will need to change the conectionString to match your localhost db server. Once that is done use the command "Update-Database" that should run the latest migration. 
