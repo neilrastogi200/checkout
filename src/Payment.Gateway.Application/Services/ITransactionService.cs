@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 using Payment.Gateway.Data.Entities;
 
 namespace Payment.Gateway.Application.Services

@@ -1,19 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using Microsoft.Extensions.Logging;
 using Moq;
+using Payment.Gateway.Application;
 using Payment.Gateway.Application.Exceptions;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Entities;
 using Payment.Gateway.Data.Repositories;
-using Payment_Gateway;
-using Payment_Gateway.Models;
 using Xunit;
-using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
 namespace Payment.Gateway.Tests
 {
@@ -25,7 +23,6 @@ namespace Payment.Gateway.Tests
         private readonly Mock<IMerchantRepository> _mockMerchantRepository;
         private readonly Mock<ILogger<PaymentManager>> _mockLogger;
         private readonly IPaymentManager _paymentManager;
-        private readonly IFixture _fixture = new Fixture().Customize(new AutoMoqCustomization());
         public PaymentManagerTests()
         {
             _mockCardDetailsService = new Mock<ICardDetailsService>();
@@ -44,7 +41,7 @@ namespace Payment.Gateway.Tests
             var cardData = TestDataBuilder.AddValidCardData();
             var currency = new Currency() {CurrencyId = 1, Name = "GBP"};
 
-            var input = new PaymentRequest()
+            var input = new Application.Models.Payment()
             {
                 Amount = 300,
                 Card = cardData,
@@ -90,7 +87,7 @@ namespace Payment.Gateway.Tests
             //Arrange
             var cardData = TestDataBuilder.AddInvalidExpiryDateCardData();
 
-            var input = new PaymentRequest()
+            var input = new Application.Models.Payment()
             {
                 Amount = 300,
                 Card = cardData,
@@ -114,32 +111,21 @@ namespace Payment.Gateway.Tests
         public async Task HandlePayment_When_PaymentRequest_Has_No_Valid_Currency_And_MerchantId_Returns_ProcessPaymentTransactionResponse_With_Errors()
         {
             //Arrange
-            var cardData = new CardDetails()
-            {
-                CardExpiryYear = "2024",
-                CardExpiryMonth = "06",
-                CardHolderName = "Mr. Curtis",
-                Cvv = "100",
-                CardNumber = "4242424242424242"
-            };
+            var cardData = TestDataBuilder.AddValidCardData();
 
-            var input = new PaymentRequest()
+            var input = new Application.Models.Payment()
             {
                 Amount = 300,
                 Card = cardData,
-                Currency = "GBP",
+                Currency = "FRC",
                 MerchantId = "6662E78B-40E3-48AC-BBB5-21B97078B97A"
             };
 
-            var expectedResult = new ProcessPaymentTransactionResponse()
-            {
-                Result = "Payment failed to process",
-                ErrorMessage = new List<string> { new string("The currency or merchantId is not supported. ") }
-            };
+            var expectedResult = TestDataBuilder.AddCurrencyAndMerchantFailure();
 
             _mockCardDetailsService.Setup(x => x.IsValid(input.Card.CardExpiryMonth, input.Card.CardExpiryYear))
                 .Returns(true);
-
+            
             //Act
             var actualResult = await _paymentManager.HandlePaymentAsync(input);
 
@@ -153,7 +139,7 @@ namespace Payment.Gateway.Tests
             //Arrange
             var cardData = TestDataBuilder.AddValidCardData();
 
-            var input = new PaymentRequest()
+            var input = new Application.Models.Payment()
             {
                 Amount = 300,
                 Card = cardData,
@@ -180,7 +166,7 @@ namespace Payment.Gateway.Tests
             var input = 1;
             var merchantIdentifier = Guid.NewGuid();
             var bankId = Guid.NewGuid();
-            var maskedCardNumber = "XXXX XXXX XXXX 4242";
+            var maskedCardNumber = "XXXX XXXX XXXX 4242 ";
 
             var currency = TestDataBuilder.AddCurrency();
             
@@ -191,7 +177,7 @@ namespace Payment.Gateway.Tests
                 Name = "Test1"
             };
 
-            var cardData = TestDataBuilder.AddValidCardDataDTO();
+            var cardData = TestDataBuilder.AddValidCardDataDto();
 
             var cardDataApplication = TestDataBuilder.AddValidCardDataWithoutCvv();
 

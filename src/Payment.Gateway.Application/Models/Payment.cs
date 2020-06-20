@@ -1,19 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Payment_Gateway.Models
+﻿namespace Payment.Gateway.Application.Models
 {
-    public class PaymentRequest
+    public class Payment
     {
-        [Required]
         public string MerchantId { get; set; }
 
-        [Required]
         public decimal Amount { get; set; }
 
-        [Required]
         public string Currency { get; set; }
 
-        [Required]
         public CardDetails Card { get; set; }
     }
 }

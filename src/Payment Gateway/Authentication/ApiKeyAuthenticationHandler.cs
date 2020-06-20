@@ -24,6 +24,7 @@ namespace Payment_Gateway.Authentication
         {
             if (!Request.Headers.TryGetValue(HeaderName, out var apiKeyHeaderValues))
             {
+                Logger.Log(LogLevel.Warning, "No value present for the key");
                 return AuthenticateResult.NoResult();
             }
 
@@ -31,13 +32,19 @@ namespace Payment_Gateway.Authentication
 
             if (apiKeyHeaderValues.Count == 0 || string.IsNullOrWhiteSpace(providedApiKey))
             {
+                Logger.Log(LogLevel.Warning,"No value present for the key");
                 return AuthenticateResult.NoResult();
+                
             }
 
             var existingApiKey = await _getApiKey.Execute(providedApiKey);
 
-            if (existingApiKey == null) return AuthenticateResult.Fail("Invalid API Key provided.");
-            
+            if (existingApiKey == null)
+            {
+                Logger.Log(LogLevel.Warning, "Invalid API Key provided.");
+                return AuthenticateResult.Fail("Invalid API Key provided.");
+            }
+
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Name, existingApiKey.Key)

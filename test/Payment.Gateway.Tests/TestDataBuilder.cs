@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 using Payment.Gateway.Data.Entities;
-using Payment_Gateway.Models;
 using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
 namespace Payment.Gateway.Tests
@@ -14,20 +13,20 @@ namespace Payment.Gateway.Tests
         {
             return new CardDetails()
             {
-                    CardExpiryYear = "2024",
-                    CardExpiryMonth = "06",
+                    CardExpiryYear = 2024,
+                    CardExpiryMonth = 06,
                     CardHolderName = "Mr. Curtis",
                     Cvv = "100",
                     CardNumber = "4242424242424242"
             };
         }
 
-        public static Data.Entities.CardDetails AddValidCardDataDTO()
+        public static Data.Entities.CardDetails AddValidCardDataDto()
         {
             return new Data.Entities.CardDetails()
             {
-                CardExpiryYear = "2024",
-                CardExpiryMonth = "06",
+                CardExpiryYear = 2024,
+                CardExpiryMonth = 06,
                 CardHolderName = "Mr. Curtis",
                 Cvv = "100",
                 CardNumber = "4242424242424242"
@@ -37,8 +36,8 @@ namespace Payment.Gateway.Tests
         {
             return new CardDetails()
             {
-                CardExpiryYear = "2024",
-                CardExpiryMonth = "06",
+                CardExpiryYear = 2024,
+                CardExpiryMonth = 06,
                 CardHolderName = "Mr. Curtis",
                 CardNumber = "4242424242424242"
             };
@@ -48,10 +47,10 @@ namespace Payment.Gateway.Tests
         {
             return new CardDetails()
             {
-                CardExpiryYear = "2024",
-                CardExpiryMonth = "06",
+                CardExpiryYear = 2024,
+                CardExpiryMonth = 06,
                 CardHolderName = "Mr. Curtis",
-                CardNumber = "XXXX XXXX XXXX 4242"
+                CardNumber = "XXXX XXXX XXXX 4242 "
             };
         }
 
@@ -59,17 +58,17 @@ namespace Payment.Gateway.Tests
         {
             return new CardDetails()
             {
-                CardExpiryYear = "2030",
-                CardExpiryMonth = "06",
+                CardExpiryYear = 2030,
+                CardExpiryMonth = 06,
                 CardHolderName = "Mr. Curtis",
                 Cvv = "100",
                 CardNumber = "4242424242424242"
             };
         }
         //ToDo: won't work resolve
-        public static PaymentRequest AddValidPaymentRequest()
+        public static Application.Models.Payment AddValidPaymentRequest()
         {
-            return new PaymentRequest()
+            return new Application.Models.Payment()
             {
                 Amount = 300,
                 Card = AddValidCardData(),
@@ -110,22 +109,21 @@ namespace Payment.Gateway.Tests
             };
         }
 
+        public static ProcessPaymentTransactionResponse AddCurrencyAndMerchantFailure()
+        {
+            return new ProcessPaymentTransactionResponse()
+            {
+                Result = "Payment failed to process",
+                ErrorMessage = new List<string> { new string("The currency or merchantId is not supported. ") }
+            };
+        }
+
         public static Currency AddCurrency()
         {
             return new Currency()
             {
                 CurrencyId = 1,
                 Name = "GBP"
-            };
-        }
-
-        public static Merchant AddMerchant()
-        {
-            return new Merchant()
-            {
-                IsActive = true,
-                MerchantId = Guid.NewGuid(),
-                Name = "Test1"
             };
         }
     }

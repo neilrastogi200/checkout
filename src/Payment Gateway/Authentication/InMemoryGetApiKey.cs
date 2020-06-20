@@ -8,7 +8,6 @@ namespace Payment_Gateway.Authentication
     public class InMemoryGetApiKey : IGetApiKey
     {
         private readonly IDictionary<string, ApiKey> _apiKeys;
-
         public InMemoryGetApiKey()
         {
             var existingApiKeys = new List<ApiKey>

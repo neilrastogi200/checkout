@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 
 namespace Payment.Gateway.Application.HttpClient
 {
@@ -12,6 +13,7 @@ namespace Payment.Gateway.Application.HttpClient
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<ApiClient> _logger;
+        private const string ProcessPaymentRequestUri = "api/PaymentTransaction/ProcessPaymentTransaction";
 
         public ApiClient(IHttpClientFactory httpClientFactory, ILogger<ApiClient> logger)
         {
@@ -30,7 +32,7 @@ namespace Payment.Gateway.Application.HttpClient
                     var data = new StringContent(json, Encoding.UTF8, "application/json");
 
                     using var response =
-                        await client.PostAsync( "api/PaymentTransaction/ProcessPaymentTransaction",
+                        await client.PostAsync( ProcessPaymentRequestUri,
                             data);
                     response.EnsureSuccessStatusCode();
                     var content = await response.Content.ReadAsStringAsync();
@@ -42,7 +44,6 @@ namespace Payment.Gateway.Application.HttpClient
                     _logger.Log(LogLevel.Error, exceptions.Message);
                     exceptions.Handle(ex => true);
                 }
-
             }
 
             return null;

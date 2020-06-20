@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Payment.Gateway.Application.Encryption;
 using Payment.Gateway.Application.Models;
 using Payment.Gateway.Data.Repositories;
 
@@ -11,18 +12,21 @@ namespace Payment.Gateway.Application.Services
     {
         private readonly ICardDetailsRepository _cardDetailsRepository;
         private readonly ILogger<CardDetailsService> _logger;
+        private readonly IAesCryptoService _cryptography;
+        private const string EncryptionKey = "cardData";
 
-        public CardDetailsService(ICardDetailsRepository cardDetailsRepository, ILogger<CardDetailsService> logger)
+        public CardDetailsService(ICardDetailsRepository cardDetailsRepository, ILogger<CardDetailsService> logger, IAesCryptoService cryptography)
         {
             _cardDetailsRepository = cardDetailsRepository ?? throw new ArgumentNullException(nameof(cardDetailsRepository));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _cryptography = cryptography ?? throw new ArgumentNullException(nameof(cryptography));
         }
 
-        public bool IsValid(string expiryMonth, string expiryYear)
+        public bool IsValid(int expiryMonth, int expiryYear)
         {
             _logger.LogInformation("CardDetailsService:Entering the isValid method");
-            var lastDateOfExpiryMonth = DateTime.DaysInMonth(Convert.ToInt32(expiryYear), Convert.ToInt32(expiryMonth));
-            var cardExpiry = new DateTime(Convert.ToInt32(expiryYear), Convert.ToInt32(expiryMonth), lastDateOfExpiryMonth);
+            var lastDateOfExpiryMonth = DateTime.DaysInMonth(expiryYear, expiryMonth);
+            var cardExpiry = new DateTime(expiryYear, expiryMonth, lastDateOfExpiryMonth);
 
             return (cardExpiry > DateTime.Now && cardExpiry < DateTime.Now.AddYears(6));
         }
@@ -30,6 +34,10 @@ namespace Payment.Gateway.Application.Services
         public int AddCardDetails(CardDetails card)
         {
             var cardDetails = MapCardDetails(card);
+
+           var encryptedCardNumber =  _cryptography.Encrypt(cardDetails.CardNumber, EncryptionKey);
+
+           cardDetails.CardNumber = encryptedCardNumber;
 
             var cardId = _cardDetailsRepository.AddCardDetails(cardDetails);
 
@@ -73,14 +81,22 @@ namespace Payment.Gateway.Application.Services
 
         public string MaskCardNumber(string cardNumber)
         {
-            var lastDigits = cardNumber.Substring(cardNumber.Length - 4, 4);
+            var decryptedCardNum = DecryptCardNumber(cardNumber);
+            var lastDigits = decryptedCardNum.Substring(decryptedCardNum.Length - 4, 4);
 
-            var requiredMask = new string('X', cardNumber.Length - lastDigits.Length);
+            var requiredMask = new string('X', decryptedCardNum.Length - lastDigits.Length);
 
             var maskedString = string.Concat(requiredMask, lastDigits);
-            var maskedCardNumberWithSpaces = Regex.Replace(maskedString, ".{4}", "$0");
+            var maskedCardNumberWithSpaces = Regex.Replace(maskedString, ".{4}", "$0 ");
 
             return maskedCardNumberWithSpaces;
+        }
+
+        private string DecryptCardNumber(string cardNumber)
+        {
+           var decryptedCardNumber = _cryptography.Decrypt(cardNumber, EncryptionKey);
+
+           return decryptedCardNumber;
         }
     }
 }

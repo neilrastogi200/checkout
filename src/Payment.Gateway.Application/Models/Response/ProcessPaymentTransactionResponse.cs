@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Payment.Gateway.Application.Models
+namespace Payment.Gateway.Application.Models.Response
 {
     public class ProcessPaymentTransactionResponse
     {

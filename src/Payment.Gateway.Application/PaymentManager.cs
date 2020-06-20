@@ -4,13 +4,13 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Payment.Gateway.Application.Exceptions;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Entities;
 using Payment.Gateway.Data.Repositories;
-using Payment_Gateway.Models;
 using CardDetails = Payment.Gateway.Application.Models.CardDetails;
 
-namespace Payment_Gateway
+namespace Payment.Gateway.Application
 {
     public class PaymentManager : IPaymentManager
     {
@@ -30,7 +30,7 @@ namespace Payment_Gateway
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
         
-        public async Task<ProcessPaymentTransactionResponse> HandlePaymentAsync(PaymentRequest paymentRequest)
+        public async Task<ProcessPaymentTransactionResponse> HandlePaymentAsync(Models.Payment paymentRequest)
         {
             var isCardValid = _cardDetailsService.IsValid(paymentRequest.Card.CardExpiryMonth,paymentRequest.Card.CardExpiryYear);
 
@@ -41,7 +41,7 @@ namespace Payment_Gateway
                     Result = "Payment failed to process",
                     ErrorMessage = new List<string>()
                     {
-                        new string("The card data is inValid. The expiryDate is wrong")
+                        "The card data is inValid. The expiryDate is wrong"
                     }
                 };
             }
@@ -76,7 +76,7 @@ namespace Payment_Gateway
                 var payment = new ProcessPaymentTransactionResponse
                 {
                     Result = "Payment failed to process",
-                    ErrorMessage = new List<string> {new string("The currency or merchantId is not supported. ")}
+                    ErrorMessage = new List<string> {"The currency or merchantId is not supported. "}
                 };
                 return payment;
             }
@@ -84,8 +84,6 @@ namespace Payment_Gateway
             _logger.LogError("There was problem adding your card data to the database.", LogLevel.Error);
             throw new DataApiException("There was problem adding your card data to the database.");
         }
-
-      
 
         public async Task<PaymentTransactionResponse> GetPaymentTransactionByIdAsync(int paymentTransactionId)
         {

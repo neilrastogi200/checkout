@@ -1,6 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc;
-using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 using Payment.Gateway.MockBank.Models;
 
 namespace Payment.Gateway.MockBank.Controller

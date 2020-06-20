@@ -27,7 +27,7 @@ namespace Payment.Gateway.IntegrationTests
             var apiKey = "072413ac-9b28-401f-a0d1-8512d7609dd8";
             httpClient.DefaultRequestHeaders.Add("X-Api-Key", apiKey);
 
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/Payment/GetPaymentTransaction?id=6");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/Payment/GetPaymentTransaction?id=14");
 
             var response = await httpClient.SendAsync(request);
 

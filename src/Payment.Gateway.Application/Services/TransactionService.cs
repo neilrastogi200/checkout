@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using Payment.Gateway.Application.Exceptions;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Models;
+using Payment.Gateway.Application.Models.Response;
 using Payment.Gateway.Data.Entities;
 using Payment.Gateway.Data.Repositories;
 using CardDetails = Payment.Gateway.Application.Models.CardDetails;

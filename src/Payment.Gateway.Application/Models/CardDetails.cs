@@ -1,22 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace Payment.Gateway.Application.Models
+﻿namespace Payment.Gateway.Application.Models
 {
     public class CardDetails
     {
-        [Required]
-        [CreditCard]
         public string CardNumber { get; set; }
+        
+        public int CardExpiryMonth { get; set; }
 
-        [Required]
-        [RegularExpression("^(0[1-9]|1[0-2])$")]
-        public string CardExpiryMonth { get; set; }
-        [Required]
-        [RegularExpression("^20[0-9]{2}$")]
-        public string CardExpiryYear { get; set; }
+        public int CardExpiryYear { get; set; }
 
-        [Required]
-        [RegularExpression("^\\d{3}$")]
         public string Cvv { get; set; }
 
         public string CardHolderName { get; set; }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Payment.Gateway.Application.Models
+namespace Payment.Gateway.Application.Models.Response
 {
     public class BankResponse
     {

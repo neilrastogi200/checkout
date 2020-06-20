@@ -9,6 +9,8 @@ using Payment.Gateway.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Payment.Gateway.Application;
+using Payment.Gateway.Application.Encryption;
 using Payment.Gateway.Application.HttpClient;
 using Payment.Gateway.Application.Services;
 using Payment.Gateway.Data.Repositories;
@@ -43,7 +45,7 @@ namespace Payment_Gateway
 
                 c.AddSecurityDefinition("X-Api-Key", new OpenApiSecurityScheme
                 {
-                    Description = "Api key needed to access the endpoints. X-Api-Key: My_API_Key",
+                    Description = "Api key is required to access the endpoints. X-Api-Key: My_API_Key",
                     In = ParameterLocation.Header,
                     Name = "X-Api-Key",
                     Type = SecuritySchemeType.ApiKey
@@ -83,6 +85,9 @@ namespace Payment_Gateway
                 services.AddScoped<IMerchantRepository, MerchantRepository>();
                 services.AddSingleton<IApiClient, ApiClient>();
                 services.AddSingleton<IGetApiKey, InMemoryGetApiKey>();
+                services.AddTransient<IKeyGenerator, Key256BitsGenerator>();
+                services.AddTransient<IAesCryptoService, AesCryptoService>();
+
 
 
         }

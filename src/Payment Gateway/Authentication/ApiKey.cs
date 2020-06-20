@@ -14,7 +14,5 @@ namespace Payment_Gateway.Authentication
             Id = id;
             Created = created;
         }
-
-       
     }
 }

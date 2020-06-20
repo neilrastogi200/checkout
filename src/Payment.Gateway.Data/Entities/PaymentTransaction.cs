@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Payment.Gateway.Data.Entities
 {
@@ -10,7 +7,6 @@ namespace Payment.Gateway.Data.Entities
     {
         [Key]
         public int PaymentTransactionId { get; set; }
-        [DataType("decimal(18,5)")]
         public decimal Amount { get; set; }
 
         [MaxLength(100)]
