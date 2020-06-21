@@ -118,7 +118,6 @@ namespace Payment_Gateway
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Web Api");
-                //c.RoutePrefix = string.Empty;
             });
 
             app.UseHttpsRedirection();
